@@ -1,3 +1,51 @@
-body {
-  background: red;
+* {
+  box-sizing: border-box;
+  margin:0;
+  padding:0;
+  border:0;
+  font-size: 0px;
 }
+main.board {
+  display: block;
+  background: #a0adc1;
+  width: 795px;
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+ul.block {
+  display:block;
+}
+
+li.cell {
+  list-style: none;
+  display:inline-block;
+  width: 15px;
+  height: 15px;
+  background: #e8e8e8;
+}
+
+li.snake {
+  background: #a0adc1;
+}
+li.snakeFront {
+  background: #8995a9;
+  animation-duration: 50ms;
+  animation-name: blink;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+li.walls {
+  background: black;
+}
+
+@keyframes blink {
+   from {
+      opacity: 1;
+   }
+   to {
+      opacity: 0;
+   }
+ }
