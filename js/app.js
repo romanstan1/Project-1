@@ -1,33 +1,11 @@
 $(() => {
   const $board = $('main.board');
   const snake = [
-    ['col29','row12'],
-    ['col28','row12'],
-    ['col27','row12'],
-    ['col26','row12'],
-    ['col25','row12'],
-    ['col24','row12'],
-    ['col23','row12'],
-    ['col22','row12'],
-    ['col21','row12'],
-    ['col20','row12'],
-    ['col19','row12'],
-    ['col18','row12'],
-    ['col17','row12'],
-    ['col16','row12'],
     ['col15','row12'],
     ['col14','row12'],
     ['col13','row12'],
     ['col12','row12']
   ];
-  // const walls = [
-  //   ['col10','row10'],
-  //   ['col11','row10'],
-  //   ['col12','row10'],
-  //   ['col13','row10'],
-  //   ['col14','row10'],
-  //   ['col15','row10']
-  // ];
 
   const direction = [
   ['-1', '0'], // north
@@ -41,35 +19,42 @@ $(() => {
   let $ul = null;
   let $li = null;
   let $frontCell = null;
-  // let $nextCell = null;
+  const boardWidth = 64;
+  const boardHeight = 51;
+  let foodY = null;
+  let foodX = null;
+  let food = [];
+  let time = 100;
 
   function createBoard() {
-    for (let x = 10; x < 50; x++) {
+    for (let x = 11; x < boardHeight; x++) {
       $board.append(`<ul class="block row${x}"></ul>`);
-      for (let i = 10; i < 63; i++) {
+      for (let i = 11; i < boardWidth; i++) {
         $ul = $(`ul.block.row${x}`);
         $ul.append(`<li class="cell col${i} row${x}"></li>`);
       }
     }
   }
+
   function createSnake() {
     for (let i = 0; i < snake.length; i++) {
       $li = $(`li.cell.${snake[i][0]}.${snake[i][1]}`);
       $li.addClass('snake');
     }
+    // $tailCell = $(`li.cell.${snake[snake.length-1][0]}.${snake[snake.length-1][1]}`);
+    // console.log($tailCell);
   }
+
   function snakePosition() {
     $li = $(`li.cell.${snake[(snake.length)-1][0]}.${snake[(snake.length)-1][1]}`);
     $li.removeClass('snake');
     snake.pop();
-    // $front = $(`li.cell.${snake[0][0]}.${snake[0][1]}`);
-    // $front.addClass('snakeFront');
-    var col = parseInt(snake[0][0].slice(-2));
+    let col = parseInt(snake[0][0].slice(-2));
     col = col + parseInt(direction[directionKey][1]);
-    var colString = 'col'+col;
-    var row = parseInt(snake[0][1].slice(-2));
+    const colString = 'col'+col;
+    let row = parseInt(snake[0][1].slice(-2));
     row = row + parseInt(direction[directionKey][0]);
-    var rowString = 'row'+row;
+    const rowString = 'row'+row;
     snake.unshift([colString, rowString]);
     createSnake();
   }
@@ -87,9 +72,8 @@ $(() => {
       directionKey = 1; // east
     }
   }
+
   function isGameOver() {
-    // $frontCell = $(`li.cell.${snake[0][0]}.${snake[0][1]}`);
-    // $front.addClass('snakeFront');
     const front = snake[0];
     snake.shift();
     for (let i = 0; i<snake.length; i++) {
@@ -102,13 +86,48 @@ $(() => {
     snake.unshift(front);
   }
 
+  function makeFood() {
+    foodX = (Math.ceil(Math.random()*(boardHeight-13)))+11; // 51 = boardHeight 1---38  cells: 11---49
+    foodY = (Math.ceil(Math.random()*(boardWidth-13)))+11; // 64 = boardWidth 1---51   cells:11---62
+    food.push('col'+foodY);
+    food.push('row'+foodX);
+    $li = $(`li.cell.${food[0]}.${food[1]}`);
+    $li.addClass('food');
+  } // Gameboard 53 wide x 40 high
+
+  function eatFood() {
+    const front = snake[0];
+    if(food.includes(front[0]) && food.includes(front[1])){
+      $li = $(`li.cell.${food[0]}.${food[1]}`);
+      $li.removeClass('food');
+      $li.addClass('foodSwallowed');
+    }
+  }
+  function foodHitsSnakesTail() {
+    const tail = snake[snake.length-1];
+    if(food.includes(tail[0]) && food.includes(tail[1])){
+      snake.push(food);
+      $li.removeClass('foodSwallowed');
+      food = [];
+      makeFood();
+      const $tailCell = $(`li.cell.${tail[0]}.${tail[1]}`);
+      $tailCell.addClass('foodEaten');
+      setTimeout(() => {
+        $tailCell.removeClass('foodEaten');
+      }, time*2);
+    }
+  }
+
   createBoard();
   createSnake();
+  makeFood();
 
   stopGame = setInterval(() => {
     snakePosition();
+    eatFood();
+    foodHitsSnakesTail();
     isGameOver();
-  }, 80);
+  }, time);
 
   $(document).keydown(arrowKeys);
 });

@@ -29,6 +29,20 @@ li.cell {
 li.snake {
   background: #a0adc1;
 }
+
+li.cell.food {
+  background: #800000;
+  opacity: 0.7;
+}
+li.cell.foodSwallowed {
+  background: #99ccff;
+  opacity: 0.8;
+}
+li.cell.foodEaten {
+  background: #1a8cff;
+  opacity: 1;
+}
+
 li.snakeFront {
   background: #8995a9;
   animation-duration: 50ms;
