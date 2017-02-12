@@ -5,17 +5,24 @@
   border:0;
   font-size: 0px;
 }
-main.board {
-  display: block;
-  background: #a0adc1;
-  width: 795px;
-  margin: 0 auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+body {
+  /*background: #e8e8e8;*/
+}
+main {
+  margin-top: 15px;
 }
 
-ul.block {
-  display:block;
+section.board {
+  position: relative;
+  display: block;
+  margin: auto;
+  margin-top: 3%;
+  margin-bottom: 30px;
+  text-align: center;
+  /*top:50%;
+  left: 50%;
+  margin: -15% 0 0 -25%;*/
+
 }
 
 li.cell {
@@ -27,13 +34,9 @@ li.cell {
 }
 
 li.snake {
-  background: #a0adc1;
+  background: #6AAD76;
 }
 
-li.cell.food {
-  background: #800000;
-  opacity: 0.7;
-}
 li.cell.foodSwallowed {
   background: #99ccff;
   opacity: 0.8;
@@ -42,6 +45,11 @@ li.cell.foodEaten {
   background: #1a8cff;
   opacity: 1;
 }
+li.cell.food {
+  background: #FA1B5E;
+  opacity: 1;
+}
+
 
 li.snakeFront {
   background: #8995a9;
@@ -51,15 +59,15 @@ li.snakeFront {
   animation-direction: alternate;
 }
 
-li.walls {
+li.cell.walls {
   background: black;
 }
 
 @keyframes blink {
    from {
-      opacity: 1;
+      background: #8995a9;
    }
    to {
-      opacity: 0;
+      background: #a0adc1;
    }
  }
