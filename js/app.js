@@ -1,5 +1,6 @@
 $(() => {
   const $board = $('section.board');
+  const $scoreValue = $('div.scoreValue');
   const snake = [
     ['col19','row32'],
     ['col18','row32'],
@@ -16,15 +17,17 @@ $(() => {
   ['0', '-1'], // west
   ['1', '0'], // south
   ['0', '1'], // east
-  ['1', '-1'], // diagnol right up
+  ['-1', '1'], // diagnol right up
   ['1', '1'], // diagnol right down
-  ['-1', '1'], // diagnol left down
+  ['1', '-1'], // diagnol left down
   ['-1', '-1'] // diagnol left up
   ];
 
-  const winH = $(window).height();
-  const winW = $(window).width();
-  let walls = [];
+  // const winH = $(window).height();
+  // const winW = $(window).width();
+  const winH = 515;
+  const winW = 800;
+  const walls = [];
   let directionKey = 3; // east
   let stopGame = null;
   let $ul = null;
@@ -36,6 +39,14 @@ $(() => {
   let foodX = null;
   const food = [];
   const time = 100;
+  let growSnake = 0;
+  var os = 0;
+  // let i = 0;
+  //let shrinkSnake = 0;
+
+  function updateScore() {
+    $scoreValue.text(snake.length-8);
+  }
 
   function createBoard() {
     for (let x = 11; x < boardHeight; x++) {
@@ -57,7 +68,8 @@ $(() => {
   function snakePosition() {
     $li = $(`li.cell.${snake[(snake.length)-1][0]}.${snake[(snake.length)-1][1]}`);
     $li.removeClass('snake');
-    snake.pop();
+    growSnake ? console.log() : snake.pop();
+    //snake.pop();
     let col = parseInt(snake[0][0].slice(-2));
     col = col + parseInt(direction[directionKey][1]);
     if(col>=boardWidth) {
@@ -113,15 +125,29 @@ $(() => {
   }
 
   function createWalls() {
-    walls = [
-    ['col17','row11'],
-    ['col16','row11'],
-    ['col15','row11'],
-    ['col14','row11'],
-    ['col13','row11'],
-    ['col12','row11'],
-    ['col11','row11']
-    ];
+
+    function levelTwo() {
+      for (let i = 11; i < boardWidth; i++){
+        walls.push([`col${i}`, `row11`]);
+        walls.push([`col${i}`, `row${boardHeight-1}`]);
+      }
+      for (let i = 12; i < boardHeight; i++){
+        walls.push([`col11`, `row${i}`]);
+        walls.push([`col${boardWidth-1}`, `row${i}`]);
+      }
+    }
+    levelTwo();
+
+    
+
+
+
+    console.log(boardWidth);
+    console.log(boardHeight);
+
+
+
+
 
     for (let i = 0; i < walls.length; i++) {
       $li = $(`li.cell.${walls[i][0]}.${walls[i][1]}`);
@@ -149,7 +175,6 @@ $(() => {
       $li.addClass('foodSwallowed');
       //food.pop();
       makeFood();
-      console.log(food);
     }
   }
   function foodHitsSnakesTail() {
@@ -163,6 +188,7 @@ $(() => {
       setTimeout(() => {
         $tailCell.removeClass('foodEaten');
       }, time*2);
+      updateScore();
     }
   }
 
@@ -170,13 +196,17 @@ $(() => {
   createBoard();
   createSnake();
   makeFood();
-  //createWalls();
+  updateScore();
+  createWalls();
 
   stopGame = setInterval(() => {
     snakePosition();
     eatFood();
     foodHitsSnakesTail();
     isGameOver();
+    // openingSequence();
+    // os++
+    // console.log(os);
   }, time);
 
 /////-------------------------------- Spell out the word SNAKE with openingSequence
@@ -186,26 +216,59 @@ $(() => {
 /////   1         3
 /////   6    2    5
 
+// const letterDirections = [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 2, 3, 4, 5, 3, 0, 3, 6, 5,   3, 0, 3 ];
+// const letterTimes       = [10, 4, 3, 4, 5, 8, 0, 8, 7, 8, 0, 8, 1, 4, 7, 1, 6, 3, 1, 4, 1, 3, 6];
+
+
+  // function openingSequence() {
+  //   const letterDirections =
+  //   [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 2, 3, 4, 5, 3, 0, 3, 6, 5, 3, 0, 3,   2, 1, 2];
+  //   const letterTimes       =
+  //   [10, 2, 3, 2, 5, 4, 0, 4, 3, 4, 0, 4, 1, 4, 3, 1, 3, 3, 1, 2, 1, 3.5, 3, 1.5, 1];
+  //   let i = 0;
+  //   //var snakeTimer;
+  //   const writeSnake = function() {
+  //     console.log(letterDirections[i]);
+  //     console.log(letterTimes[i]);
+  //     if ( i < letterDirections.length) {
+  //       //console.log('Interval CLEARED?');
+  //       // return clearTimeout(snakeTimer);
+  //       growSnake = 1;
+  //       directionKey = letterDirections[i];
+  //       setTimeout(writeSnake, time*(letterTimes[i])+50);
+  //       console.log('i='+i);
+  //       i++;
+  //     } else {
+  //       console.log('Interval CLEARED?');
+  //       growSnake = 0;
+  //     }
+  //     //snakeTimer = setTimeout(writeSnake, letterTimes[i]);
+  //   };
+  //   setTimeout(writeSnake, 50);
+  // }
+  let i = 0;
+  const letterDirections =
+  [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 2, 3, 4, 5, 3, 0, 3, 6, 5, 3, 0, 3,   2, 1, 2];
+  const letterTimes       =
+  [10, 22, 25, 2, 5, 4, 0, 4, 3, 4, 0, 4, 1, 4, 3, 1, 3, 3, 1, 2, 1, 3.5, 3, 1.5, 1];
+
   function openingSequence() {
-    const letterDirections = [0, 1, 0, 3, 0, 0, 0, 0];
-    const letterTimes     = [10, 20, 3, 2, 18, 12, 9, 10];
-    let i = 0;
-
-    const writeSnake = function() {
-      directionKey = letterDirections[i];
-      snakeTimer = setInterval(writeSnake, time*letterTimes[i]);
-      i++;
-      if ( i-1 > letterDirections[i]) {
-        clearInterval(snakeTimer);
-        console.log('Interval CLEARED?');
+    if (os === letterTimes[i]) {
+      if (i < letterDirections.length) {
+        growSnake = 1;
+        directionKey = letterDirections[i];
+        os++;
+      } else {
+        growSnake = 0;
       }
-    };
-
-    let snakeTimer = setInterval(writeSnake, time*letterTimes[i]);
-
+      i++;
+    }
   }
 
-  //openingSequence();
+
+
+
+  // openingSequence();
 
   $(document).keydown(arrowKeys);
 });
