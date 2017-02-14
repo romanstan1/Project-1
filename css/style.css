@@ -10,7 +10,7 @@ body {
   font-family: 'Space Mono', monospace;
 }
 main {
-  margin-top: 15px;
+  margin-top: 80px;
 }
 
 h1 {
@@ -21,12 +21,29 @@ section.board {
   position: relative;
   display: block;
   margin: 0 auto;
-  margin-top: 3%;
+  margin-top: 5%;
   margin-bottom: 30px;
   text-align: center;
   /*top:50%;
   left: 50%;
   margin: -15% 0 0 -25%;*/
+}
+section.board div.instructions{
+  position: absolute;
+  display: block;
+  text-align: center;
+  background: white;
+  color:black;
+  width:70%;
+  height:70%;
+  left:15%;
+  top:15%;
+  margin: 0 auto;
+  opacity: 0.8;
+}
+section.board div.instructions p{
+  font-size: 20px;
+  margin-top: 30px;
 }
 section.belowBoard {
   position: relative;
@@ -34,18 +51,17 @@ section.belowBoard {
   margin: 0 auto;
   text-align: center;
 }
-section.belowBoard.hide {
-  /*display: none;*/
-}
+section.board div.hide, section.hide {
+  display: none;
+ }
 
-
-section.scoreSection, section.speedSection, section.levelSection {
+section.scoreSection, section.levelSection {
   position: relative;
   display: inline-block;
   font-size: 20px;
   color: black;
   background:;
-  width: 200px;
+  width: 300px;
   height: 30px;
   /*margin: auto;*/
   /*text-align: center;*/
