@@ -1,16 +1,12 @@
 $(() => {
-  const $board = $('div.gameBoard');
-  const $scoreValue = $('div.scoreValue');
-  const $levelValue = $('div.levelValue');
   let snake = [
-
-    ['col16','row30'],
     ['col15','row30'],
     ['col14','row30'],
     ['col13','row30'],
     ['col12','row30'],
     ['col11','row30'],
-    ['col10','row30']
+    ['col10','row30'],
+    ['col9','row30']
   ];
 
   const direction = [
@@ -24,9 +20,9 @@ $(() => {
   ['-1', '-1'] // diagnol left up
   ];
 
-  // const winH = $(window).height();
-  //let winW = $(window).width();
-
+  const $board = $('div.gameBoard');
+  const $scoreValue = $('div.scoreValue');
+  const $levelValue = $('div.levelValue');
   const $instructions = $('.instructions');
   const $belowBoard = $('.belowBoard');
   const winH = 515;
@@ -37,25 +33,26 @@ $(() => {
   let stopWalls = null;
   let $ul = null;
   let $li = null;
-  // let $cells = null;
+  let $food = null;
   let $frontCell = null;
+  let $tailCell = null;
   let boardWidth = Math.round(winW/15)+10;
   const boardHeight = Math.round(winH/15)+6;
   let foodY = null;
   let foodX = null;
   let wallY = null;
   let wallX = null;
-  const food = [];
+  let food = [];
   let time = 20;
   let growSnake = 0;
   var os = 0;
   let isPaused = false;
   let runSequence = true;
-  let destroy = false;
+  let destroy = 1;
   let levelOn = 1;
+  let front = null;
+  let tail = null;
 
-  // let i = 0;
-  //let shrinkSnake = 0;
 
   function updateScore() {
     $scoreValue.text(snake.length-7);
@@ -70,16 +67,17 @@ $(() => {
       }
     }
     const $ulblock = $('ul.block');
-    if(destroy) {
-      $ulblock.animate({width: '690px', easing: 'swing'}, 1000);
-      $instructions.animate({opacity: '0.92', easing: 'swing'}, 1200);
+    if(destroy === 2) {
+      $ulblock.animate({width: '690px', easing: 'swing'}, 900);
+      $instructions.animate({opacity: '0.92', easing: 'swing'}, 1300);
+    } else if (destroy === 3) {
+      $ulblock.css({width: '690px', easing: 'none'});
     }
+    destroy = 3;
   }
 
   function destroyBoard() {
-    destroy = true;
     $board.html('');
-    // $ulblock.css({'background': 'blue'});
   }
 
   function createSnake() {
@@ -90,10 +88,12 @@ $(() => {
   }
 
   function snakePosition() {
-    $li = $(`li.cell.${snake[(snake.length)-1][0]}.${snake[(snake.length)-1][1]}`);
-    $li.removeClass('snake');
+    front = snake[0];
+    tail = snake[snake.length-1];
+    $tailCell = $(`li.cell.${tail[0]}.${tail[1]}`);
+    $tailCell.removeClass('snake');
     if (!growSnake) snake.pop();
-    let col = parseInt(snake[0][0].slice(-2));
+    let col = parseInt(front[0].slice(-2));
     col = col + parseInt(direction[directionKey][1]);
     if(col>=boardWidth) {
       col = (col - boardWidth)+11;
@@ -101,7 +101,7 @@ $(() => {
       col = (boardWidth -1);
     }
     const colString = 'col'+col;
-    let row = parseInt(snake[0][1].slice(-2));
+    let row = parseInt(front[1].slice(-2));
     row = row + parseInt(direction[directionKey][0]);
     if(row >= boardHeight) {
       row = (row - boardHeight)+11;
@@ -110,7 +110,9 @@ $(() => {
     }
     const rowString = 'row'+row;
     snake.unshift([colString, rowString]);
-    createSnake();
+    front = snake[0];
+    $frontCell = $(`li.cell.${front[0]}.${front[1]}`);
+    $frontCell.addClass('snake');
   }
 
   function arrowKeys(e) {
@@ -125,57 +127,64 @@ $(() => {
     } else if (e.which === 37 ) {
       directionKey = 1; // east
     } else if (e.which === 90 ) { // x
-      if (levelOn === 1) {
-        //
-      } else {
-        levelOn--;
+      if (isPaused) {
+        if (levelOn === 1) {
+          //
+        } else {
+          levelOn--;
+        }
+        selectLevel();
+        $levelValue.text(levelOn);
       }
-      selectLevel();
-      $levelValue.text(levelOn);
     } else if (e.which === 88 ) {  // z
-      if (levelOn === 4) {
-        //
-      } else {
-        levelOn++;
+      if (isPaused) {
+        if (levelOn === 4) {
+          //
+        } else {
+          levelOn++;
+        }
+        selectLevel();
+        $levelValue.text(levelOn);
       }
-      selectLevel();
-      $levelValue.text(levelOn);
     } else if (e.which === 32 ) {
       if(!isPaused) {
         isPaused = true;
         clearInterval(stopWalls);
         clearInterval(stopGame);
         $instructions.toggleClass('hide');
-
       } else {
         isPaused = false;
         startGame();
         $instructions.toggleClass('hide');
+        if (levelOn === 4) levelFour();
       }
     }
   }
 
   function isGameOver() {
-    const front = snake[0];
     snake.shift();
-    $frontCell = $(`li.cell.${front[0]}.${front[1]}`);
-
     //does snake hit into itself
-    for (let i = 0; i<snake.length; i++) {
+    for (let i = 0; i < snake.length; i++) {
       if(snake[i][0] === front[0] && snake[i][1] === front[1]) {
         clearInterval(stopGame);
         $frontCell.addClass('snakeFront');
-        console.log(walls);
-        console.log(walls[0]);
+        setTimeout(function () {
+          resetGame();
+          isPaused =  true;
+          $instructions.toggleClass('hide');
+        }, 1500);
       }
     }
-
     // does snake hit into a wall
-    for (let i = 0; i<walls.length; i++) {
-      console.log(walls[i][0], front[0], walls[i][1], front[1]);
+    for (let i = 0; i < walls.length; i++) {
       if(walls[i][0] === front[0] && walls[i][1] === front[1]) {
         clearInterval(stopGame);
         $frontCell.addClass('snakeFront');
+        setTimeout(function () {
+          resetGame();
+          isPaused =  true;
+          $instructions.toggleClass('hide');
+        }, 1500);
       }
     }
     snake.unshift(front);
@@ -194,6 +203,40 @@ $(() => {
     }
   }
 
+  function resetGame() {
+    destroyBoard();
+    createBoard();
+    $li = $(`li.cell`);
+    $li.removeClass('snake');
+    snake = [
+      ['col15','row30'],
+      ['col14','row30'],
+      ['col13','row30'],
+      ['col12','row30'],
+      ['col11','row30'],
+      ['col10','row30'],
+      ['col9','row30']
+    ];
+    $ul = null;
+    $li = null;
+    $food = null;
+    $frontCell = null;
+    $tailCell = null;
+    boardWidth = Math.round(winW/15)+10;
+    //boardHeight = Math.round(winH/15)+6;
+    foodY = null;
+    foodX = null;
+    wallY = null;
+    wallX = null;
+    food = [];
+    createSnake();
+    selectLevel();
+    directionKey = 3;
+    setTimeout(() => {
+      makeFood();
+    }, 3000);
+  }
+
   function levelTwo() {
     for (let i = 11; i < boardWidth; i++){
       walls.push([`col${i}`, `row11`]);
@@ -205,25 +248,62 @@ $(() => {
     }
   }
   function levelThree() {
-    for (let i = 11; i < 28; i++){
+    walls = [
+      ['col41','row16'],
+      ['col41','row17'],
+      ['col41','row18'],
+      ['col41','row19'],
+      ['col41','row20'],
+      ['col41','row21'],
+      ['col41','row22'],
+      ['col41','row23'],
+      ['col41','row24'],
+      ['col41','row25'],
+      ['col41','row26'],
+      ['col41','row27'],
+      ['col41','row28'],
+      ['col41','row29'],
+      ['col41','row30'],
+      ['col41','row31'],
+      ['col41','row32'],
+      ['col41','row33'],
+      ['col41','row34'],
+      ['col26','row16'],
+      ['col26','row17'],
+      ['col26','row18'],
+      ['col26','row19'],
+      ['col26','row20'],
+      ['col26','row21'],
+      ['col26','row22'],
+      ['col26','row23'],
+      ['col26','row24'],
+      ['col26','row25'],
+      ['col26','row26'],
+      ['col26','row27'],
+      ['col26','row28'],
+      ['col26','row29'],
+      ['col26','row30'],
+      ['col26','row31'],
+      ['col26','row32'],
+      ['col26','row33'],
+      ['col26','row34']
+    ];
+
+    for (let i = 11; i < boardWidth; i++){
       walls.push([`col${i}`, `row11`]);
-      walls.push([`col${i}`, `row${28-1}`]);
-    }
-    for (let i = 12; i < 19; i++){
-      walls.push([`col11`, `row${i}`]);
-      walls.push([`col${19-1}`, `row${i}`]);
+      walls.push([`col${i}`, `row${boardHeight-1}`]);
     }
   }
 
   function levelFour() {
-    // stopWalls = setInterval(() => {
-    wallX = (Math.ceil(Math.random()*(boardHeight-13)))+11;
-    wallY = (Math.ceil(Math.random()*(boardWidth-13)))+11;
-    walls.unshift([]);
-    walls[0].unshift('row'+wallX);
-    walls[0].unshift('col'+wallY);
-    createWalls();
-    // }, 3000);
+    stopWalls = setInterval(() => {
+      wallX = (Math.ceil(Math.random()*(boardHeight-13)))+11;
+      wallY = (Math.ceil(Math.random()*(boardWidth-13)))+11;
+      walls.unshift([]);
+      walls[0].unshift('row'+wallX);
+      walls[0].unshift('col'+wallY);
+      createWalls();
+    }, 3000);
   }
 
   function selectLevel() {
@@ -248,45 +328,38 @@ $(() => {
       clearInterval(stopWalls);
       destroyWalls();
       walls = [];
-      levelFour();
+      if(!isPaused) levelFour();
     }
-
-
   }
-
-
-
-///// ----------------------------------------------------- FOOD FUNCTIONS
+//  ----------------------- FOOD FUNCTIONS ------------------------------
   function makeFood() {
     foodX = (Math.ceil(Math.random()*(boardHeight-13)))+11;
     foodY = (Math.ceil(Math.random()*(boardWidth-13)))+11;
     food.unshift([]);
-    food[0].unshift('col'+foodY);
     food[0].unshift('row'+foodX);
-    $li = $(`li.cell.${food[0][0]}.${food[0][1]}`);
-    $li.addClass('food');
+    food[0].unshift('col'+foodY);
+    $food = $(`li.cell.${food[0][0]}.${food[0][1]}`);
+    $food.addClass('food');
   }
 
   function eatFood() {
-    const front = snake[0];
-    if(food[0].includes(front[0]) && food[0].includes(front[1])){
-      $li = $(`li.cell.${food[0][0]}.${food[0][1]}`);
-      $li.removeClass('food');
-      $li.addClass('foodSwallowed');
+    if(food[0][0] === front[0] && food[0][1] === front[1] ){
+      $food.removeClass('food');
+      $food.addClass('foodSwallowed');
       makeFood();
     }
   }
+
   function foodHitsSnakesTail() {
-    const tail = snake[snake.length-1];
     const $tailCell = $(`li.cell.${tail[0]}.${tail[1]}`);
-    if(food[food.length-1].includes(tail[0]) && food[food.length-1].includes(tail[1])){
+    if(food[food.length-1][0] === tail[0] && food[food.length-1][1] === tail[1]){
       snake.push(food[food.length-1]);
       $tailCell.removeClass('foodSwallowed');
       food.pop();
       $tailCell.addClass('foodEaten');
       setTimeout(() => {
         $tailCell.removeClass('foodEaten');
-      }, time*2);
+      }, time);
       updateScore();
     }
   }
@@ -296,15 +369,7 @@ $(() => {
   createSnake();
   updateScore();
 
-
-  // setTimeout(() => {
-  //   makeFood();
-  // }, 9500);
-
-  // createWalls();
-
   function startGame() {
-
     stopGame = setInterval(() => {
       snakePosition();
       if (runSequence) {
@@ -322,10 +387,9 @@ $(() => {
 
 /////-------------------------------- Spell out the word SNAKE with openingSequence
 
-
   let i = 0;
   const letterDirections = [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 6, 2, 3, 0, 3, 2, 3, 0, 7 ,0 , 3, 2, 3, 0, 4, 3, 6, 5, 3, 0, 3, 2, 1, 2, 3, 2, 1, 2, 3, 3, 3];
-  const letterTimes = [1, 15, 5, 5, 4, 7, 8, 2, 8, 8, 8, 6, 4, 5, 2, 5, 5, 5, 2, 5, 3, 2, 5, 8, 2, 5, 4, 2, 4, 5, 3, 8, 6, 2, 5, 3, 4, 2, 4, 4, 2, 22];
+  const letterTimes = [1, 15, 5, 5, 4, 7, 8, 2, 8, 8, 8, 6, 4, 5, 2, 5, 5, 5, 2, 5, 3, 2, 5, 8, 2, 5, 4, 2, 4, 5, 3, 8, 6, 2, 5, 3, 4, 2, 4, 4, 2, 23];
 
   var newArray = letterTimes.concat(); //Copy initial array
 
@@ -338,7 +402,6 @@ $(() => {
   /////   1         3
   /////   6    2    5
   function openingSequence() {
-
     os++;
     if (os === newArray[i]) {
       if (i < letterDirections.length-1) {
@@ -348,24 +411,12 @@ $(() => {
       } else {
         time = 100;
         growSnake = 0;
-        runSequence = false;
+        destroy = 2;
         winW = 700;
         boardWidth = Math.round(winW/15)+10;
         setTimeout(() => {
-          destroyBoard();
-          createBoard();
-          $li = $(`li.cell`);
-          $li.removeClass('snake');
-          snake = [
-            ['col16','row30'],
-            ['col15','row30'],
-            ['col14','row30'],
-            ['col13','row30'],
-            ['col12','row30'],
-            ['col11','row30'],
-            ['col10','row30']
-          ];
-          createSnake();
+          resetGame();
+          runSequence = false;
           selectLevel();
           $levelValue.text(levelOn);
           $instructions.toggleClass('hide');
@@ -374,16 +425,12 @@ $(() => {
 
         isPaused = true;
         clearInterval(stopGame);
-        setTimeout(() => {
-          makeFood();
-        }, 2500);
+        // setTimeout(() => {
+        //   makeFood();
+        // }, 2000);
       }
       i++;
     }
   }
-
-
-
-
   $(document).keydown(arrowKeys);
 });
