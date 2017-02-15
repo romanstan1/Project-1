@@ -50,11 +50,12 @@ section.board div.instructions div {
   font-size: 18px;
   display:inline-block;
   margin: 5px;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 section.board div.instructions h2 {
   font-size: 20px;
-  margin-top: 60px;
+  margin-top: 90px;
+  color: dodgerblue;
 }
 section.belowBoard {
   position: relative;
@@ -66,16 +67,30 @@ section.board div.hide, section.hide {
   display: none;
  }
 
-section.scoreSection, section.levelSection {
+section.scoreSection, section.levelSection, section.highScoreSection {
   position: relative;
   display: inline-block;
   font-size: 20px;
   color: black;
-  background:;
-  width: 300px;
+  /*background: #ededed;*/
+  width: 280px;
   height: 30px;
-  /*margin: auto;*/
-  /*text-align: center;*/
+  text-align: left;
+}
+section.highScoreSection {
+  text-align: left;
+  width: 220px;
+}
+section.scoreSection {
+  text-align: left;
+  width: 140px;
+}
+section.levelSection div.levelValue, section.scoreSection div.scoreValue {
+  color: dodgerblue;
+}
+
+section.highScoreSection div.highScoreValue {
+  color: green;
 }
 
 section.belowBoard div{
@@ -88,7 +103,7 @@ section.belowBoard div{
 ul.block {
   background: #e8e8e8;
   margin: 0 auto;
-  width:1080px;
+  width: 1080px;
 }
 
 li.cell {
@@ -97,6 +112,10 @@ li.cell {
   width: 15px;
   height: 15px;
   background: #e8e8e8;
+}
+
+li.cell.walls {
+  background: black;
 }
 
 li.snake {
@@ -108,11 +127,11 @@ li.cell.foodSwallowed {
   opacity: 0.8;
 }
 li.cell.foodEaten {
-  background: #1a8cff;
+  background: #d15555;
   opacity: 1;
 }
 li.cell.food {
-  background: #5732db;
+  background: dodgerblue;
   opacity: 1;
 }
 
@@ -122,10 +141,6 @@ li.snakeFront {
   animation-name: blink;
   animation-iteration-count: infinite;
   animation-direction: alternate;
-}
-
-li.cell.walls {
-  background: black;
 }
 
 @keyframes blink {

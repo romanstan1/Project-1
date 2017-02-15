@@ -1,4 +1,4 @@
-$(() => {
+function setup() {
   let snake = [
     ['col15','row30'],
     ['col14','row30'],
@@ -21,13 +21,17 @@ $(() => {
   ];
 
   const $board = $('div.gameBoard');
+  const $h2 = $('h2');
   const $scoreValue = $('div.scoreValue');
   const $levelValue = $('div.levelValue');
   const $instructions = $('.instructions');
   const $belowBoard = $('.belowBoard');
+  const $highScore = $('.highScoreValue');
   const winH = 515;
   let winW = 1100;
   let walls = [];
+  const highscore = [];
+  const levelOnArray = ['','Snake 2', 'Classic Snake', 'Some walls', 'Bombs'];
   let directionKey = 3; // east
   let stopGame = null;
   let stopWalls = null;
@@ -48,11 +52,13 @@ $(() => {
   var os = 0;
   let isPaused = false;
   let runSequence = true;
+  let makeFoodFlag = false;
   let destroy = 1;
   let levelOn = 1;
   let front = null;
   let tail = null;
-
+  let i = 0;
+  let gameOver =  false;
 
   function updateScore() {
     $scoreValue.text(snake.length-7);
@@ -74,6 +80,7 @@ $(() => {
       $ulblock.css({width: '690px', easing: 'none'});
     }
     destroy = 3;
+    gameOver =  false;
   }
 
   function destroyBoard() {
@@ -134,7 +141,7 @@ $(() => {
           levelOn--;
         }
         selectLevel();
-        $levelValue.text(levelOn);
+        $levelValue.text(levelOnArray[levelOn]);
       }
     } else if (e.which === 88 ) {  // z
       if (isPaused) {
@@ -144,21 +151,40 @@ $(() => {
           levelOn++;
         }
         selectLevel();
-        $levelValue.text(levelOn);
+        $levelValue.text(levelOnArray[levelOn]);
       }
     } else if (e.which === 32 ) {
-      if(!isPaused) {
-        isPaused = true;
-        clearInterval(stopWalls);
-        clearInterval(stopGame);
-        $instructions.toggleClass('hide');
-      } else {
-        isPaused = false;
-        startGame();
-        $instructions.toggleClass('hide');
-        if (levelOn === 4) levelFour();
+      if (!gameOver) {
+        if(!isPaused) {
+          isPaused = true;
+          clearInterval(stopWalls);
+          clearInterval(stopGame);
+          $h2.text('GAME PAUSED');
+          $instructions.toggleClass('hide');
+        } else {
+          isPaused = false;
+          startGame();
+          if(makeFoodFlag) makeFood();
+          $instructions.toggleClass('hide');
+          if (levelOn === 4) {
+            levelFour();
+            createSnake();
+          }
+          makeFoodFlag = false;
+        }
       }
     }
+  }
+  function gameOverActions() {
+    clearInterval(stopGame);
+    $frontCell.addClass('snakeFront');
+    isPaused =  true;
+    gameOver =  true;
+    setTimeout(function () {
+      resetGame();
+      $h2.text('PLAY AGAIN?');
+      $instructions.toggleClass('hide');
+    }, 2500);
   }
 
   function isGameOver() {
@@ -166,25 +192,13 @@ $(() => {
     //does snake hit into itself
     for (let i = 0; i < snake.length; i++) {
       if(snake[i][0] === front[0] && snake[i][1] === front[1]) {
-        clearInterval(stopGame);
-        $frontCell.addClass('snakeFront');
-        setTimeout(function () {
-          resetGame();
-          isPaused =  true;
-          $instructions.toggleClass('hide');
-        }, 1500);
+        gameOverActions();
       }
     }
     // does snake hit into a wall
     for (let i = 0; i < walls.length; i++) {
       if(walls[i][0] === front[0] && walls[i][1] === front[1]) {
-        clearInterval(stopGame);
-        $frontCell.addClass('snakeFront');
-        setTimeout(function () {
-          resetGame();
-          isPaused =  true;
-          $instructions.toggleClass('hide');
-        }, 1500);
+        gameOverActions();
       }
     }
     snake.unshift(front);
@@ -197,44 +211,35 @@ $(() => {
     }
   }
   function destroyWalls() {
+    clearInterval(stopWalls);
     for (let i = 0; i < walls.length; i++) {
       $li = $(`li.cell.${walls[i][0]}.${walls[i][1]}`);
       $li.removeClass('walls');
     }
+    walls = [];
   }
 
   function resetGame() {
+    highscore.push(snake.length-7);
+    $highScore.text(Math.max.apply(null, highscore));
     destroyBoard();
     createBoard();
     $li = $(`li.cell`);
     $li.removeClass('snake');
     snake = [
-      ['col15','row30'],
-      ['col14','row30'],
-      ['col13','row30'],
-      ['col12','row30'],
       ['col11','row30'],
       ['col10','row30'],
-      ['col9','row30']
+      ['col9','row30'],
+      ['col8','row30'],
+      ['col7','row30'],
+      ['col6','row30'],
+      ['col5','row30']
     ];
-    $ul = null;
-    $li = null;
-    $food = null;
-    $frontCell = null;
-    $tailCell = null;
-    boardWidth = Math.round(winW/15)+10;
-    //boardHeight = Math.round(winH/15)+6;
-    foodY = null;
-    foodX = null;
-    wallY = null;
-    wallX = null;
     food = [];
-    createSnake();
     selectLevel();
+    updateScore();
     directionKey = 3;
-    setTimeout(() => {
-      makeFood();
-    }, 3000);
+    makeFoodFlag = true;
   }
 
   function levelTwo() {
@@ -249,46 +254,8 @@ $(() => {
   }
   function levelThree() {
     walls = [
-      ['col41','row16'],
-      ['col41','row17'],
-      ['col41','row18'],
-      ['col41','row19'],
-      ['col41','row20'],
-      ['col41','row21'],
-      ['col41','row22'],
-      ['col41','row23'],
-      ['col41','row24'],
-      ['col41','row25'],
-      ['col41','row26'],
-      ['col41','row27'],
-      ['col41','row28'],
-      ['col41','row29'],
-      ['col41','row30'],
-      ['col41','row31'],
-      ['col41','row32'],
-      ['col41','row33'],
-      ['col41','row34'],
-      ['col26','row16'],
-      ['col26','row17'],
-      ['col26','row18'],
-      ['col26','row19'],
-      ['col26','row20'],
-      ['col26','row21'],
-      ['col26','row22'],
-      ['col26','row23'],
-      ['col26','row24'],
-      ['col26','row25'],
-      ['col26','row26'],
-      ['col26','row27'],
-      ['col26','row28'],
-      ['col26','row29'],
-      ['col26','row30'],
-      ['col26','row31'],
-      ['col26','row32'],
-      ['col26','row33'],
-      ['col26','row34']
+      ['col41','row16'], ['col41','row17'], ['col41','row18'], ['col41','row19'], ['col41','row20'], ['col41','row21'], ['col41','row22'], ['col41','row23'], ['col41','row24'], ['col41','row25'], ['col41','row26'], ['col41','row27'], ['col41','row28'], ['col41','row29'], ['col41','row30'], ['col41','row31'], ['col41','row32'], ['col41','row33'], ['col41','row34'], ['col26','row16'], ['col26','row17'], ['col26','row18'], ['col26','row19'], ['col26','row20'], ['col26','row21'], ['col26','row22'], ['col26','row23'], ['col26','row24'], ['col26','row25'], ['col26','row26'], ['col26','row27'], ['col26','row28'], ['col26','row29'], ['col26','row30'], ['col26','row31'], ['col26','row32'], ['col26','row33'], ['col26','row34']
     ];
-
     for (let i = 11; i < boardWidth; i++){
       walls.push([`col${i}`, `row11`]);
       walls.push([`col${i}`, `row${boardHeight-1}`]);
@@ -308,26 +275,18 @@ $(() => {
 
   function selectLevel() {
     if(levelOn === 1) {
-      clearInterval(stopWalls);
       destroyWalls();
-      walls = [];
       createWalls();
     } else if (levelOn === 2) {
-      clearInterval(stopWalls);
       destroyWalls();
-      walls = [];
       levelTwo();
       createWalls();
     } else if (levelOn === 3) {
-      clearInterval(stopWalls);
       destroyWalls();
-      walls = [];
       levelThree();
       createWalls();
     } else if (levelOn === 4) {
-      clearInterval(stopWalls);
       destroyWalls();
-      walls = [];
       if(!isPaused) levelFour();
     }
   }
@@ -340,6 +299,15 @@ $(() => {
     food[0].unshift('col'+foodY);
     $food = $(`li.cell.${food[0][0]}.${food[0][1]}`);
     $food.addClass('food');
+    // -------------
+
+    for (let i = 0; i < walls.length; i++) {
+      if(walls[i][0] === food[0][0] && walls[i][1] === food[0][1]) {
+        $food.removeClass('food');
+        food.shift();
+        makeFood();
+      }
+    }
   }
 
   function eatFood() {
@@ -363,7 +331,6 @@ $(() => {
       updateScore();
     }
   }
-
 ////------------------------------------------------------- INITIALIZING
   createBoard();
   createSnake();
@@ -382,26 +349,23 @@ $(() => {
       }
     }, time);
   }
-
   startGame();
 
 /////-------------------------------- Spell out the word SNAKE with openingSequence
 
-  let i = 0;
   const letterDirections = [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 6, 2, 3, 0, 3, 2, 3, 0, 7 ,0 , 3, 2, 3, 0, 4, 3, 6, 5, 3, 0, 3, 2, 1, 2, 3, 2, 1, 2, 3, 3, 3];
   const letterTimes = [1, 15, 5, 5, 4, 7, 8, 2, 8, 8, 8, 6, 4, 5, 2, 5, 5, 5, 2, 5, 3, 2, 5, 8, 2, 5, 4, 2, 4, 5, 3, 8, 6, 2, 5, 3, 4, 2, 4, 4, 2, 23];
-
-  var newArray = letterTimes.concat(); //Copy initial array
-
-  for (var z = 1; z < letterTimes.length; z++) {
-    newArray[z] = newArray[z-1] + letterTimes[z];
-  }
 
   ////// DIRECTION MAP
   /////   7    0    4
   /////   1         3
   /////   6    2    5
+
   function openingSequence() {
+    const newArray = letterTimes.concat(); //Copy initial array
+    for (var z = 1; z < letterTimes.length; z++) {
+      newArray[z] = newArray[z-1] + letterTimes[z];
+    }
     os++;
     if (os === newArray[i]) {
       if (i < letterDirections.length-1) {
@@ -414,23 +378,21 @@ $(() => {
         destroy = 2;
         winW = 700;
         boardWidth = Math.round(winW/15)+10;
+        snake = [1,2,3,4,5,6,7];
         setTimeout(() => {
           resetGame();
           runSequence = false;
           selectLevel();
-          $levelValue.text(levelOn);
+          $levelValue.text(levelOnArray[levelOn]);
           $instructions.toggleClass('hide');
           $belowBoard.toggleClass('hide');
         }, 1300);
-
         isPaused = true;
         clearInterval(stopGame);
-        // setTimeout(() => {
-        //   makeFood();
-        // }, 2000);
       }
       i++;
     }
   }
   $(document).keydown(arrowKeys);
-});
+}
+$(setup);
