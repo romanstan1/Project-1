@@ -27,6 +27,8 @@ section.board {
   margin-top: 5%;
   margin-bottom: 30px;
   text-align: center;
+  width: 1100px;
+  height: 435px;
 }
 section.board div.instructions{
   position: absolute;
@@ -34,10 +36,10 @@ section.board div.instructions{
   text-align: center;
   background: white;
   color:black;
-  width:50%;
-  height:88%;
-  left:25%;
-  top:6%;
+  width:650px;
+  height:395px;
+  left:225px;
+  top:20px;
   margin: 0 auto;
   opacity: 0;
 }
@@ -62,6 +64,7 @@ section.belowBoard {
   display: block;
   margin: 0 auto;
   text-align: center;
+  width: 1100px;
 }
 section.board div.hide, section.hide {
   display: none;
@@ -151,3 +154,11 @@ li.snakeFront {
       background: #a0adc1;
    }
  }
+
+ /*@media only screen and (max-width: 1120px)  {
+   li.cell {
+     width: 13px;
+     height: 13px;
+   }
+
+  }*/
