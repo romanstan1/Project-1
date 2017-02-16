@@ -1,4 +1,5 @@
 function setup() {
+
   let snake = [
     ['col15','row30'],
     ['col14','row30'],
@@ -78,6 +79,9 @@ function setup() {
       $instructions.animate({opacity: '0.92', easing: 'swing'}, 1300);
     } else if (destroy === 3) {
       $ulblock.css({width: '690px', easing: 'none'});
+      //$li = $(`li.cell`);
+      //$li.css({margin: '10px'});
+      //$li.animate({height: '10px', easing: 'swing'}, 2900);
     }
     destroy = 3;
     gameOver =  false;
@@ -299,7 +303,6 @@ function setup() {
     food[0].unshift('col'+foodY);
     $food = $(`li.cell.${food[0][0]}.${food[0][1]}`);
     $food.addClass('food');
-    // -------------
 
     for (let i = 0; i < walls.length; i++) {
       if(walls[i][0] === food[0][0] && walls[i][1] === food[0][1]) {
@@ -332,9 +335,6 @@ function setup() {
     }
   }
 ////------------------------------------------------------- INITIALIZING
-  createBoard();
-  createSnake();
-  updateScore();
 
   function startGame() {
     stopGame = setInterval(() => {
@@ -349,12 +349,43 @@ function setup() {
       }
     }, time);
   }
+
+  createBoard();
+  createSnake();
+  updateScore();
   startGame();
 
-/////-------------------------------- Spell out the word SNAKE with openingSequence
+
+/////-------------------------------- Spell out the word SNAKE with openingSequence ---------------------
 
   const letterDirections = [3, 0, 1, 0, 3, 2, 3, 0, 5, 0, 3, 6, 2, 3, 0, 3, 2, 3, 0, 7 ,0 , 3, 2, 3, 0, 4, 3, 6, 5, 3, 0, 3, 2, 1, 2, 3, 2, 1, 2, 3, 3, 3];
-  const letterTimes = [1, 17, 5, 5, 4, 7, 8, 2, 8, 8, 8, 6, 4, 5, 2, 5, 5, 5, 2, 5, 3, 2, 5, 8, 2, 5, 4, 2, 4, 5, 3, 8, 6, 2, 5, 3, 4, 2, 4, 4, 2, 21];
+  // const letterTimes =
+  //   [1, 17, 5, 5, 4,
+  //     7, 8, 2, 8, 8,
+  //
+  //     8, 6, 4, 5, 2,
+  //     5, 5, 5, 2, 5,
+  //
+  //     3, 2, 5, 8, 2,
+  //     5, 4, 2, 4, 5,
+  //
+  //     3, 8, 6, 2, 5,
+  //     3, 4, 2, 4, 4,
+  //     2, 21];
+
+  const letterTimess =
+    [1, 18, 23, 28, 32,
+      39, 47, 49, 57, 65,
+
+      73, 79, 83, 88, 90,
+      95, 100, 105, 107, 112,
+
+      115, 117, 122, 130, 132,
+      137, 141, 143, 147, 152,
+
+      155, 163, 169, 171, 176,
+      179, 183, 185, 189, 193,
+      195, 216];
 
   ////// DIRECTION MAP
   /////   7    0    4
@@ -362,12 +393,13 @@ function setup() {
   /////   6    2    5
 
   function openingSequence() {
-    const newArray = letterTimes.concat(); //Copy initial array
-    for (var z = 1; z < letterTimes.length; z++) {
-      newArray[z] = newArray[z-1] + letterTimes[z];
-    }
+
+    // const newArray = letterTimes.concat(); //Copy initial array
+    // for (var z = 1; z < letterTimes.length; z++) {
+    //   newArray[z] = newArray[z-1] + letterTimes[z];
+    // }
     os++;
-    if (os === newArray[i]) {
+    if (os === letterTimess[i]) {
       if (i < letterDirections.length-1) {
         growSnake = 1;
         directionKey = letterDirections[i];
@@ -395,4 +427,5 @@ function setup() {
   }
   $(document).keydown(arrowKeys);
 }
+
 $(setup);
