@@ -131,6 +131,7 @@ li.cell.foodSwallowed {
 }
 li.cell.foodEaten {
   background: #d15555;
+  background: white;
   opacity: 1;
 }
 li.cell.food {
