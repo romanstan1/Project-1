@@ -122,10 +122,10 @@ li.cell {
 
 li.cell.danger {
   opacity: 0.0;
-  background: #373737;
-  -ms-transform: translate(10px,-300px) rotate(285deg);
-  -webkit-transform: translate(10px,-300px) rotate(285deg);
-  transform: translate(10px,-300px) rotate(285deg);
+  background: #f2f2f2;
+  -ms-transform: translate(20px,-300px) rotate(285deg);
+  -webkit-transform: translate(20px,-300px) rotate(285deg);
+  transform: translate(20px,-300px) rotate(285deg);
   animation-duration: 400ms;
   animation-name: blinkDanger;
   animation-iteration-count: infinite;
@@ -134,11 +134,11 @@ li.cell.danger {
 
 li.cell.fire {
   opacity: 0.0;
-  background: #373737;
+  background: #f2f2f2;
   -ms-transform: translate(-20px,-250px) rotate(-145deg);
   -webkit-transform: translate(-20px,-250px) rotate(-145deg);
   transform: translate(-20px,-250px) rotate(-145deg);
-  animation-duration: 200ms;
+  animation-duration: 500ms;
   animation-name: blinkFire;
   animation-iteration-count: infinite;
   animation-direction: alternate;
@@ -184,7 +184,7 @@ li.snakeFront {
 
  @keyframes blinkFire {
     from {
-       background: #1a1a1a;
+       background: #4d4d4d;
     }
     to {
        background: #ff1a1a;

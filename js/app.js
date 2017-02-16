@@ -105,23 +105,7 @@ snakeGame.setup = function() {
       $ulblock.animate({width: '690px', easing: 'swing'}, 900);
       $instructions.animate({opacity: '0.92', easing: 'swing'}, 1300);
     } else if (destroy === 3) {
-      //$instructions.toggleClass('hide');
-
       $ulblock.css({width: '690px', easing: 'none'});
-      //$li = $(`li.cell.col28.row28`);
-      //$li.addClass('danger');
-      // setTimeout(function () {
-      //   $(`li.cell.col28.row28`).addClass('danger');
-      // }, 1500);
-      //
-      // setTimeout(function () {
-      //   $instructions.toggleClass('hide');
-      // }, 8500);
-      // $li.animate({
-      //   margin: '3px',
-      //   opacity: '0.6',
-      //   easing: 'swing'},
-      //   3000);
     }
     destroy = 3;
     gameOver =  false;
@@ -263,9 +247,9 @@ snakeGame.setup = function() {
   };
 
   snakeGame.blowUpBoard = function() {
+    clearInterval(stopWalls);
     const $ulblock = $('ul.block');
     $ulblock.css({background: 'white', easing: 'none'});
-    // setTimeout(function () {
     for (let x = 11; x < boardHeight; x++) {
       for (let i = 11; i < boardWidth; i = i + Math.ceil(Math.random()*3)) {
         setTimeout(function () {
@@ -280,7 +264,7 @@ snakeGame.setup = function() {
     setTimeout(function () {
       snakeGame.resetGame();
       $instructions.toggleClass('hide');
-    }, 7000);
+    }, 8000);
   };
 
   snakeGame.resetGame = function() {
@@ -336,7 +320,7 @@ snakeGame.setup = function() {
       walls[0].unshift('row'+wallX);
       walls[0].unshift('col'+wallY);
       snakeGame.createWalls();
-    }, 3000);
+    }, 2000);
   };
 
   snakeGame.selectLevel = function() {
