@@ -105,10 +105,23 @@ snakeGame.setup = function() {
       $ulblock.animate({width: '690px', easing: 'swing'}, 900);
       $instructions.animate({opacity: '0.92', easing: 'swing'}, 1300);
     } else if (destroy === 3) {
+      //$instructions.toggleClass('hide');
+
       $ulblock.css({width: '690px', easing: 'none'});
-      //$li = $(`li.cell`);
-      //$li.css({margin: '10px'});
-      //$li.animate({height: '10px', easing: 'swing'}, 2900);
+      //$li = $(`li.cell.col28.row28`);
+      //$li.addClass('danger');
+      // setTimeout(function () {
+      //   $(`li.cell.col28.row28`).addClass('danger');
+      // }, 1500);
+      //
+      // setTimeout(function () {
+      //   $instructions.toggleClass('hide');
+      // }, 8500);
+      // $li.animate({
+      //   margin: '3px',
+      //   opacity: '0.6',
+      //   easing: 'swing'},
+      //   3000);
     }
     destroy = 3;
     gameOver =  false;
@@ -211,9 +224,8 @@ snakeGame.setup = function() {
     isPaused =  true;
     gameOver =  true;
     setTimeout(function () {
-      snakeGame.resetGame();
+      snakeGame.blowUpBoard();
       $h2.text('PLAY AGAIN?');
-      $instructions.toggleClass('hide');
     }, 2500);
   };
 
@@ -250,6 +262,27 @@ snakeGame.setup = function() {
     walls = [];
   };
 
+  snakeGame.blowUpBoard = function() {
+    const $ulblock = $('ul.block');
+    $ulblock.css({background: 'white', easing: 'none'});
+    // setTimeout(function () {
+    for (let x = 11; x < boardHeight; x++) {
+      for (let i = 11; i < boardWidth; i = i + Math.ceil(Math.random()*3)) {
+        setTimeout(function () {
+          if(i%2 === 0) {
+            $(`li.cell.col${i}.row${x}`).addClass('danger');
+          } else {
+            $(`li.cell.col${i}.row${x}`).addClass('fire');
+          }
+        }, 50);
+      }
+    }
+    setTimeout(function () {
+      snakeGame.resetGame();
+      $instructions.toggleClass('hide');
+    }, 7000);
+  };
+
   snakeGame.resetGame = function() {
     highscore.push(snake.length-7);
     $highScore.text(Math.max.apply(null, highscore));
@@ -271,6 +304,7 @@ snakeGame.setup = function() {
     snakeGame.updateScore();
     directionKey = 3;
     makeFoodFlag = true;
+      //$instructions.toggleClass('hide');
   };
 
   snakeGame.levelTwo = function() {

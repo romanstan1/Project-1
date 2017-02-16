@@ -9,7 +9,8 @@ li, ul {
 }
 
 body {
-  /*background: #e8e8e8;*/
+  /*background: orange;
+  opacity: 0.9;*/
   font-family: 'Space Mono', monospace;
 }
 main {
@@ -115,6 +116,32 @@ li.cell {
   width: 15px;
   height: 15px;
   background: #e8e8e8;
+  transition: transform 2.0s ease-in, opacity 2.0s ease-in;
+  opacity: 1;
+}
+
+li.cell.danger {
+  opacity: 0.0;
+  background: #373737;
+  -ms-transform: translate(10px,-300px) rotate(285deg);
+  -webkit-transform: translate(10px,-300px) rotate(285deg);
+  transform: translate(10px,-300px) rotate(285deg);
+  animation-duration: 400ms;
+  animation-name: blinkDanger;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+li.cell.fire {
+  opacity: 0.0;
+  background: #373737;
+  -ms-transform: translate(-20px,-250px) rotate(-145deg);
+  -webkit-transform: translate(-20px,-250px) rotate(-145deg);
+  transform: translate(-20px,-250px) rotate(-145deg);
+  animation-duration: 200ms;
+  animation-name: blinkFire;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 li.cell.walls {
@@ -155,10 +182,20 @@ li.snakeFront {
    }
  }
 
- /*@media only screen and (max-width: 1120px)  {
-   li.cell {
-     width: 13px;
-     height: 13px;
-   }
+ @keyframes blinkFire {
+    from {
+       background: #1a1a1a;
+    }
+    to {
+       background: #ff1a1a;
+    }
+  }
 
-  }*/
+  @keyframes blinkDanger {
+     from {
+        background: #d9d9d9;
+     }
+     to {
+        background: #ff9999;
+     }
+   }
