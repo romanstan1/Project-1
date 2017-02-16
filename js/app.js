@@ -262,9 +262,20 @@ snakeGame.setup = function() {
       }
     }
     setTimeout(function () {
+      for (let i = 0; i < snake.length; i++) {
+        $(`li.cell.${snake[i][0]}.${snake[i][1]}`).addClass('danger');
+      }
+      for (let i = 0; i < walls.length; i++) {
+        $(`li.cell.${walls[i][0]}.${walls[i][1]}`).addClass('danger');
+      }
+      for (let i = 0; i < food.length; i++) {
+        $(`li.cell.${food[i][0]}.${food[i][1]}`).addClass('danger');
+      }
+    }, 3000);
+    setTimeout(function () {
       snakeGame.resetGame();
       $instructions.toggleClass('hide');
-    }, 8000);
+    }, 7000);
   };
 
   snakeGame.resetGame = function() {
