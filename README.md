@@ -36,7 +36,7 @@ If the front of the snake hits the the walls or snake cells, an animation is run
 
 ####The build
 
-* HTML 5, CSS, JavaScript jQuery were used to create this game.
+* HTML5, CSS, JavaScript jQuery were used to create this game.
 * Animation was created using the style.css stylesheet and through its app.js file.
 * The Google Web Font 'Space Mono' has been used to style the game.
 

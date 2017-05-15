@@ -83,6 +83,7 @@ let $tailCell = null;
 snakeGame.setup = function() {
   const $board = $('div.gameBoard');
   const $h2 = $('h2');
+  const $h5 = $('h5');
   const $scoreValue = $('div.scoreValue');
   const $levelValue = $('div.levelValue');
   const $instructions = $('.instructions');
@@ -431,6 +432,7 @@ snakeGame.setup = function() {
           snakeGame.selectLevel();
           $levelValue.text(levelOnArray[levelOn]);
           $instructions.toggleClass('hide');
+          $h5.toggleClass('hide');
           $belowBoard.toggleClass('hide');
         }, 1300);
         isPaused = true;

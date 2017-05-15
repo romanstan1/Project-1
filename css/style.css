@@ -116,7 +116,7 @@ li.cell {
   width: 15px;
   height: 15px;
   background: #e8e8e8;
-  transition: transform 2.0s ease-in, opacity 2.0s ease-in;
+  transition: transform 7.0s ease-in, opacity 7.0s ease-in;
   opacity: 1;
 }
 
@@ -125,7 +125,8 @@ li.cell.danger {
   background: #f2f2f2;
   -ms-transform: translate(20px,-300px) rotate(285deg);
   -webkit-transform: translate(20px,-300px) rotate(285deg);
-  transform: translate(20px,-300px) rotate(285deg);
+  /*transform: translate(20px,-300px) rotate(285deg);*/
+  transform: perspective(000px) translate3d(110px,110px,110px);
   animation-duration: 400ms;
   animation-name: blinkDanger;
   animation-iteration-count: infinite;
@@ -137,7 +138,8 @@ li.cell.fire {
   background: #f2f2f2;
   -ms-transform: translate(-20px,-250px) rotate(-145deg);
   -webkit-transform: translate(-20px,-250px) rotate(-145deg);
-  transform: translate(-20px,-250px) rotate(-145deg);
+  /*transform: translate(-20px,-250px) rotate(-145deg);*/
+  transform: perspective(400px) translate3d(210px,210px,210px);
   animation-duration: 500ms;
   animation-name: blinkFire;
   animation-iteration-count: infinite;
@@ -171,6 +173,25 @@ li.snakeFront {
   animation-name: blink;
   animation-iteration-count: infinite;
   animation-direction: alternate;
+}
+
+h5 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  text-align: center;
+  transition: all 1.2s ease-in-out;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-top:80px;
+  background: -webkit-linear-gradient(left,#35d6d1 30%,#ecff28 70%) no-repeat;
+  -webkit-background-clip: text;
+  color: #b4f25f;
+  -webkit-text-fill-color: transparent;
+  opacity: 1;
+  }
+
+h5.hide {
+  display: none;
 }
 
 @keyframes blink {
